@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "house-recon companion",
   "version": "0.1.0",
-  "description": "Lets the house-recon analyzer page fetch the listing, market, and sold-comps pages in your own browser — no copy-paste.",
+  "description": "One click fetches a home's listing, market, and sold-comps pages into the house-recon analyzer. Everything stays in your browser.",
   "minimum_chrome_version": "116",
   "permissions": ["tabs", "scripting"],
   "host_permissions": [

@@ -10,7 +10,8 @@ if (Test-Path $out) { Remove-Item $out -Force }
 if (Test-Path $stage) { Remove-Item $stage -Recurse -Force }
 New-Item -ItemType Directory -Force $stage | Out-Null
 
-$manifest = Get-Content (Join-Path $here "manifest.json") -Raw | ConvertFrom-Json
+$manifest = Get-Content (Join-Path $here "manifest.json") -Raw -Encoding UTF8 |
+    ConvertFrom-Json
 $manifest.host_permissions = @($manifest.host_permissions |
     Where-Object { $_ -notmatch "localhost|127\.0\.0\.1" })
 foreach ($cs in $manifest.content_scripts) {
