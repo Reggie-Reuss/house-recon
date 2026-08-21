@@ -97,8 +97,10 @@ Upload the same zip.
 - **Short description / summary** (if shown) → the manifest sentence: One
   click fetches a home's listing, market, and sold-comps pages into the
   house-recon analyzer. Everything stays in your browser.
-- **Search terms** (optional, up to 7): real estate, home buying, zillow,
-  due diligence, house, offer, property records
+- **Search terms** — only in some Partner Center layouts; if the field isn't
+  shown, skip it (the name + description already carry the keywords). If it
+  is: real estate, home buying, zillow, due diligence, house, offer,
+  property records
 
 ### Notes for certification (optional free-text box before Publish)
 Paste: This extension acts only when the user clicks "Fetch pages
