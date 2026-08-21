@@ -1,0 +1,6 @@
+name = "house-recon-county"
+main = "src/index.js"
+compatibility_date = "2026-08-01"
+
+# Free plan is plenty: lookups are cached for a day, and a single house
+# lookup is 5 subrequests (search + 4 datalet tabs).

@@ -1,0 +1,42 @@
+{
+  "zips_run": 150,
+  "note": "merged final (post parser fixes)",
+  "market_ok": {
+    "pct": 100.0,
+    "n": 150
+  },
+  "stl_plausible": {
+    "pct": 100.0,
+    "n": 143
+  },
+  "dom_plausible": {
+    "pct": 100.0,
+    "n": 148
+  },
+  "comps_ok": {
+    "pct": 94.7,
+    "n": 150
+  },
+  "ppsf_plausible": {
+    "pct": 100.0,
+    "n": 143
+  },
+  "consistent": {
+    "pct": 96.5,
+    "n": 144
+  },
+  "consistency_ratio": {
+    "n": 144,
+    "median": 1.065,
+    "p10": 0.887,
+    "p90": 1.483,
+    "within_15pct": 59.0,
+    "within_25pct": 75.7
+  },
+  "blocked_zips": 4,
+  "zillow_fallbacks": 0,
+  "comps_rows": {
+    "median": 38,
+    "total": 4789
+  }
+}

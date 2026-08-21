@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>house-recon — house due diligence in your browser</title>
+<meta name="description" content="Free, open-source residential real-estate due diligence: dated history timeline, red flags, and an empirically anchored offer ladder — computed entirely in your browser. Nothing is uploaded.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏠</text></svg>">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="kicker">house-recon</p>
+    <h1>Point it at a house.<br>Get the story the listing doesn't tell.</h1>
+    <p class="sub">
+      Free, open-source due diligence for home buyers: a dated history timeline,
+      automated red flags, and an offer ladder anchored to your zip's real market
+      data. This page runs the full analysis <strong>in your browser</strong> —
+      nothing you paste ever leaves your machine.
+    </p>
+    <div class="cta-row">
+      <a class="btn primary" href="#app">Analyze a house — no install</a>
+      <a class="btn" href="https://github.com/Reggie-Reuss/house-recon">GitHub&nbsp;↗</a>
+      <a class="btn" href="https://github.com/Reggie-Reuss/house-recon/blob/main/examples/742-juniper-hollow-ln-anytown-oh-45099/report.md">Sample report&nbsp;↗</a>
+    </div>
+    <ul class="stats">
+      <li><b>50 states</b> validation campaign</li>
+      <li><b>96.5%</b> cross-source price consistency</li>
+      <li><b>100%</b> client-side — no server, no tracking</li>
+      <li><b>MIT</b> licensed</li>
+    </ul>
+  </div>
+</header>
+
+<section class="how">
+  <div class="wrap">
+    <h2>How it works</h2>
+    <p class="lede">
+      Listing sites block robots — but they don't block <em>you</em>. You open the
+      pages in your own browser like any shopper; this page turns their text into
+      analysis. No API keys, no accounts, no scraping servers.
+    </p>
+    <ol class="steps">
+      <li><b>Install the 1-click extension</b>
+          (<a href="https://github.com/Reggie-Reuss/house-recon/tree/main/extension#install">Chrome
+          or Edge</a>, free) — it fetches every page for you, inside your own
+          browser. Prefer not to? A manual copy-paste mode always works.</li>
+      <li><b>Type the address.</b> We normalize it against the U.S. Census
+          Bureau geocoder — and in supported counties, the county auditor
+          record (owner, transfers, values, taxes) fetches itself.</li>
+      <li><b>Read the report.</b> Timeline, price-cut history, failed pendings,
+          flip detection, red flags, county record, seller-motivation score,
+          and a 4-rung offer ladder with estimated acceptance odds — rendered
+          here, downloadable as Markdown.</li>
+    </ol>
+    <p class="note">
+      County auditor records (owner, transfers, values, an Ohio tax projection)
+      appear right here for supported counties. Want photos, satellite
+      captures, and the optional AI judgment layer too? That's the
+      <a href="https://github.com/Reggie-Reuss/house-recon">command-line pipeline</a> —
+      same engine, full dossier.
+    </p>
+  </div>
+</section>
+
+<main id="app" class="app">
+  <div class="wrap">
+
+    <div class="panel" id="panel-address">
+      <h2><span class="stepnum">1</span> Address</h2>
+      <div class="field-row">
+        <input id="addr-input" type="text" autocomplete="street-address"
+               placeholder="e.g. 742 Juniper Hollow Ln, Anytown, OH 45099"
+               aria-label="Street address">
+        <button class="btn primary" id="addr-find">Find address</button>
+      </div>
+      <div id="addr-status" class="status" role="status"></div>
+      <div id="addr-matches" class="matches"></div>
+      <div id="county-status" class="status" role="status"></div>
+    </div>
+
+    <div class="panel" id="panel-paste">
+      <h2><span class="stepnum">2</span> Get the house's data</h2>
+
+      <div id="ext-install" class="installcard">
+        <p class="installlead">The <b>house-recon extension</b> fetches the
+          listing, market, and sold-comps pages for you — one click, inside
+          <em>your own</em> browser. Nothing is uploaded anywhere.</p>
+        <div class="cta-row center">
+          <a class="btn primary big" id="install-chrome"
+             href="https://github.com/Reggie-Reuss/house-recon/tree/main/extension#install"
+             target="_blank" rel="noopener">Add to Chrome ↗</a>
+          <a class="btn big" id="install-edge"
+             href="https://github.com/Reggie-Reuss/house-recon/tree/main/extension#install"
+             target="_blank" rel="noopener">Add to Edge ↗</a>
+        </div>
+        <p class="storenote">Already installed? Reload this page. Firefox
+          support is planned.</p>
+      </div>
+
+      <div id="ext-ready" class="installcard hidden">
+        <button class="btn primary big" id="ext-fetch" type="button">⚡ Fetch pages automatically</button>
+        <p class="storenote">Opens the listing, market, and sold pages in
+          tabs, reads them, closes them — about 10–30 seconds. The report
+          renders itself.</p>
+      </div>
+      <div id="ext-status" class="status center" role="status"></div>
+
+      <p class="hint center">Just exploring?
+        <button class="btn small" id="load-demo" type="button">Load demo data</button></p>
+
+      <details id="manual-mode">
+        <summary>No extension? Manual mode — bring the pages in yourself</summary>
+        <p class="hint">For each box: click <em>Open&nbsp;↗</em>, press
+          <kbd>Ctrl</kbd>+<kbd>A</kbd> then <kbd>Ctrl</kbd>+<kbd>C</kbd> on the
+          page, and come back — the box fills itself. Faster: drag
+          <a id="bookmarklet" class="bm" href="#"
+             title="Drag me to your bookmarks bar">🏠 Grab page</a> onto your
+          bookmarks bar once, then just click it on each page.</p>
+        <details class="why">
+          <summary>Why copying? Trouble?</summary>
+          <p>Browsers forbid this page from downloading other websites, and
+          listing sites block bot servers — but not you, a normal visitor, so
+          the pages come in through your browser. The whole page highlighting
+          blue on Ctrl+A is normal. If a box doesn't fill itself when you
+          return, your browser may have declined clipboard access — click the
+          📋 button or just press <kbd>Ctrl</kbd>+<kbd>V</kbd> in the box. If
+          your bookmarks bar is hidden,
+          <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>B</kbd> shows it.</p>
+        </details>
+
+      <div class="pastecard">
+        <div class="pastehead">
+          <div>
+            <label class="pastelabel" for="paste-listing">1. The house's listing page <em>(required)</em></label>
+            <div class="example">URL looks like: <code id="ex-listing">zillow.com/homedetails/123-Main-St-Anytown-OH-45000/…</code></div>
+          </div>
+          <div class="pasteactions"><a id="open-listing" class="btn open" target="_blank" rel="noopener" aria-disabled="true">Open listing ↗</a><button type="button" class="btn small clip" data-target="listing" title="Fill this box from your clipboard">📋 Paste</button></div>
+        </div>
+        <textarea id="paste-listing" rows="6" spellcheck="false"
+          placeholder="Paste the whole Zillow listing page's text here… (tip: scroll that page to the bottom once first, so the Price history section loads)"></textarea>
+        <div class="pastestate" id="state-listing" role="status"></div>
+      </div>
+
+      <div class="two-col">
+        <div class="pastecard">
+          <div class="pastehead">
+            <div>
+              <label class="pastelabel" for="paste-market">2. Your zip's market page <em>(optional — anchors the offer ladder)</em></label>
+              <div class="example">URL looks like: <code id="ex-market">redfin.com/zipcode/45000/housing-market</code></div>
+            </div>
+            <div class="pasteactions"><a id="open-market" class="btn open" target="_blank" rel="noopener" aria-disabled="true">Open market page ↗</a><button type="button" class="btn small clip" data-target="market" title="Fill this box from your clipboard">📋 Paste</button></div>
+          </div>
+          <textarea id="paste-market" rows="4" spellcheck="false"
+            placeholder="Paste the Redfin housing-market page's text here…"></textarea>
+          <div class="pastestate" id="state-market" role="status"></div>
+        </div>
+        <div class="pastecard">
+          <div class="pastehead">
+            <div>
+              <label class="pastelabel" for="paste-sold">3. Recently sold nearby <em>(optional — values the house)</em></label>
+              <div class="example">URL looks like: <code id="ex-sold">redfin.com/zipcode/45000/filter/include=sold-6mo,property-type=house</code></div>
+            </div>
+            <div class="pasteactions"><a id="open-sold" class="btn open" target="_blank" rel="noopener" aria-disabled="true">Open sold search ↗</a><button type="button" class="btn small clip" data-target="sold" title="Fill this box from your clipboard">📋 Paste</button></div>
+          </div>
+          <textarea id="paste-sold" rows="4" spellcheck="false"
+            placeholder="Paste the Redfin sold-search page's text here… (scroll through the results once first)"></textarea>
+          <div class="pastestate" id="state-sold" role="status"></div>
+        </div>
+      </div>
+
+      <div class="cta-row">
+        <button class="btn primary big" id="analyze">Analyze ↓</button>
+        <span class="privacy">🔒 Analysis runs locally in this tab. Nothing is uploaded.</span>
+      </div>
+      <div id="analyze-status" class="status" role="status"></div>
+      </details>
+    </div>
+
+    <div class="panel hidden" id="panel-report">
+      <h2><span class="stepnum">3</span> Report</h2>
+      <div class="cta-row">
+        <button class="btn" id="download-md">Download report.md</button>
+      </div>
+      <article id="report" class="report"></article>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><b>house-recon</b> collects and organizes; it does not replace an
+      inspection, a title search, or an agent. Offer odds are calibrated
+      estimates from public listing signals — not predictions, and not a fitted
+      statistical model (<a href="https://github.com/Reggie-Reuss/house-recon/blob/main/VALIDATION.md">how we validated the anchors</a>).
+      Respect the terms of service of the sites you browse. Verify anything that
+      matters with licensed professionals.</p>
+    <p>
+      <a href="https://github.com/Reggie-Reuss/house-recon">Source on GitHub</a> ·
+      <a href="https://github.com/Reggie-Reuss/house-recon/blob/main/METHODS.md">Methodology</a> ·
+      MIT license · Address lookup by the
+      <a href="https://geocoding.geo.census.gov/">U.S. Census Bureau geocoder</a>
+      (the one thing this page calls out to — your pasted text is never sent).
+    </p>
+  </div>
+</footer>
+
+<script src="recon.js"></script>
+<script src="demo-data.js"></script>
+<script src="bookmarklet.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

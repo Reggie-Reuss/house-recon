@@ -1,0 +1,554 @@
+{
+  "zillow": {
+    "price": 289900,
+    "beds": "3",
+    "baths": "2",
+    "sqft": "1,624",
+    "year_built": "1962",
+    "lot_acres": "0.34",
+    "price_per_sqft": "179",
+    "mls": "912345678",
+    "parcel": "Z99-0000-000-000",
+    "date_on_market": "5/14/2026",
+    "tax_assessed": 170800,
+    "annual_tax": 2610,
+    "description": "Fully renovated ranch on a quiet street! New LVP flooring, quartz counters,\nstainless appliances, and a cozy gas fireplace in the family room. New roof\n2021. Move-in ready -- nothing to do but unpack. Seller motivated, bring all\noffers!",
+    "facts_raw": "Facts & features\nInterior\nBedrooms: 3\nBathrooms: 2\nFull bathrooms: 2\nHeating: Heat pump\nCooling: Central Air\nAppliances included: Dishwasher, Microwave, Range\nFlooring: Luxury Vinyl Plank, Carpet\nTotal interior livable area: 1,624 sqft\nParking\nTotal spaces: 2\nParking features: Attached Garage\nConstruction\nHome type: Single Family\nFoundation: Crawl Space\nRoof: Asphalt Shingle\nYear built: 1962\nOther\nDate on market: 5/14/2026\nMLS#: 912345678\nParcel number: Z99-0000-000-000\nAnnual tax amount: $2,610\nTax assessed value: $170,800\n",
+    "facts": [
+      "Bedrooms: 3",
+      "Bathrooms: 2",
+      "Full bathrooms: 2",
+      "Heating: Heat pump",
+      "Cooling: Central Air",
+      "Appliances included: Dishwasher, Microwave, Range",
+      "Flooring: Luxury Vinyl Plank, Carpet",
+      "Total interior livable area: 1,624 sqft",
+      "Total spaces: 2",
+      "Parking features: Attached Garage",
+      "Home type: Single Family",
+      "Foundation: Crawl Space",
+      "Roof: Asphalt Shingle",
+      "Year built: 1962",
+      "Date on market: 5/14/2026",
+      "MLS#: 912345678",
+      "Parcel number: Z99-0000-000-000",
+      "Annual tax amount: $2,610",
+      "Tax assessed value: $170,800"
+    ],
+    "price_history": [
+      {
+        "date": "6/25/2026",
+        "event": "Price change",
+        "price": 289900,
+        "mls": "912345678",
+        "source": "Sample MLS #912345678"
+      },
+      {
+        "date": "5/14/2026",
+        "event": "Listed for sale",
+        "price": 299900,
+        "mls": "912345678",
+        "source": "Sample MLS #912345678"
+      },
+      {
+        "date": "11/21/2025",
+        "event": "Listing removed",
+        "price": 314900,
+        "mls": "909111222",
+        "source": "Sample MLS #909111222"
+      },
+      {
+        "date": "10/6/2025",
+        "event": "Back on market",
+        "price": 314900,
+        "mls": "909111222",
+        "source": "Sample MLS #909111222"
+      },
+      {
+        "date": "9/2/2025",
+        "event": "Pending sale",
+        "price": 314900,
+        "mls": "909111222",
+        "source": "Sample MLS #909111222"
+      },
+      {
+        "date": "7/11/2025",
+        "event": "Price change",
+        "price": 314900,
+        "mls": "909111222",
+        "source": "Sample MLS #909111222"
+      },
+      {
+        "date": "5/20/2025",
+        "event": "Listed for sale",
+        "price": 329900,
+        "mls": "909111222",
+        "source": "Sample MLS #909111222"
+      },
+      {
+        "date": "12/3/2021",
+        "event": "Sold",
+        "price": 228000,
+        "mls": null,
+        "source": "Public Record"
+      },
+      {
+        "date": "6/18/2021",
+        "event": "Sold",
+        "price": 118000,
+        "mls": null,
+        "source": "Public Record"
+      }
+    ],
+    "tax_history": [
+      {
+        "year": 2025,
+        "taxes": 2610,
+        "change_pct": 2.1,
+        "assessment": 170800
+      },
+      {
+        "year": 2024,
+        "taxes": 2556,
+        "change_pct": 1.8,
+        "assessment": 167300
+      },
+      {
+        "year": 2023,
+        "taxes": 2511,
+        "change_pct": 15.9,
+        "assessment": 164900
+      },
+      {
+        "year": 2022,
+        "taxes": 2167,
+        "change_pct": 38.2,
+        "assessment": 142300
+      },
+      {
+        "year": 2021,
+        "taxes": 1568,
+        "change_pct": 0.5,
+        "assessment": 103900
+      }
+    ],
+    "url": "https://www.zillow.com/homes/(synthetic-demo)"
+  },
+  "trulia": {
+    "events": []
+  },
+  "county": {
+    "owner": "SAMPLE HOLDINGS LLC",
+    "mailing": "Mailing Name 1: SAMPLE HOLDINGS LLC; PO BOX 4821; COLUMBUS OH 43004",
+    "parcel_id": "Z99-0000-000-000",
+    "total_acres": "0.3400",
+    "taxing_district": "T99",
+    "district_name": "ANYTOWN TWP",
+    "gross_tax_rate": "62.400000",
+    "effective_tax_rate": "52.104213",
+    "non_business_credit": "8.6512%",
+    "owner_occupied_credit": "0.0000%",
+    "dwelling": {
+      "Year Built": "1962",
+      "Effective Year": "2021",
+      "Stories": "1.0",
+      "Construction": "FRAME",
+      "Basement": "CRAWL",
+      "Bedrooms": "3",
+      "Full Baths": "2",
+      "Half Baths": "0",
+      "Heat System": "HEAT PUMP",
+      "Fuel Type": "ELECTRIC",
+      "Total Living Area": "1,624"
+    },
+    "tentative_value": {
+      "land": 24500,
+      "building": 187300,
+      "total": 211800,
+      "total_assessed": 74130
+    },
+    "current_value": {
+      "land": 21000,
+      "building": 149800,
+      "total": 170800,
+      "total_assessed": 59780
+    },
+    "transfers": [
+      {
+        "date": "21-JUN-2021",
+        "amount": 118000
+      },
+      {
+        "date": "07-DEC-2021",
+        "amount": 228000
+      }
+    ],
+    "value_history": [
+      {
+        "year": 2020,
+        "land": 19000,
+        "building": 84200,
+        "total": 103200
+      },
+      {
+        "year": 2021,
+        "land": 19000,
+        "building": 84900,
+        "total": 103900
+      },
+      {
+        "year": 2022,
+        "land": 21000,
+        "building": 121300,
+        "total": 142300
+      },
+      {
+        "year": 2023,
+        "land": 21000,
+        "building": 143900,
+        "total": 164900
+      },
+      {
+        "year": 2024,
+        "land": 21000,
+        "building": 146300,
+        "total": 167300
+      },
+      {
+        "year": 2025,
+        "land": 21000,
+        "building": 149800,
+        "total": 170800
+      }
+    ],
+    "permits": "none on file",
+    "tax_distribution": [
+      "ANYTOWN CSD Subtotal 58.70%",
+      "TOTAL 100.00%"
+    ],
+    "topography": "LEVEL"
+  },
+  "maps": {},
+  "market": {
+    "sale_to_list_pct": 98.4,
+    "median_dom": 21,
+    "median_sale_price": 265000,
+    "label": "very competitive",
+    "source": "https://www.redfin.com/zipcode/45099/housing-market"
+  },
+  "comps": {
+    "source": "redfin",
+    "url": "https://www.redfin.com/zipcode/45099/filter/include=sold-6mo,property-type=house",
+    "n": 14,
+    "n_with_sqft": 13,
+    "median_ppsf": 172.9,
+    "rows": [
+      {
+        "price": 272000,
+        "beds": 3.0,
+        "sqft": 1540,
+        "ppsf": 176.6,
+        "address": "418 Meadowlark Ct, Anytown, OH 45099"
+      },
+      {
+        "price": 296500,
+        "beds": 3.0,
+        "sqft": 1710,
+        "ppsf": 173.4,
+        "address": "1203 Old Quarry Rd, Anytown, OH 45099"
+      },
+      {
+        "price": 248000,
+        "beds": 3.0,
+        "sqft": 1390,
+        "ppsf": 178.4,
+        "address": "77 Sycamore Bend, Anytown, OH 45099"
+      },
+      {
+        "price": 315000,
+        "beds": 4.0,
+        "sqft": 1940,
+        "ppsf": 162.4,
+        "address": "2145 Harvest Moon Dr, Anytown, OH 45099"
+      },
+      {
+        "price": 262400,
+        "beds": 3.0,
+        "sqft": 1505,
+        "ppsf": 174.4,
+        "address": "930 Foxglove Ln, Anytown, OH 45099"
+      },
+      {
+        "price": 289900,
+        "beds": 3.0,
+        "sqft": 1660,
+        "ppsf": 174.6,
+        "address": "501 Willow Gate Dr, Anytown, OH 45099"
+      },
+      {
+        "price": 233500,
+        "beds": 2.0,
+        "sqft": 1120,
+        "ppsf": 208.5,
+        "address": "16 Carriage Hill Ct, Anytown, OH 45099"
+      },
+      {
+        "price": 305000,
+        "beds": 4.0,
+        "sqft": 1875,
+        "ppsf": 162.7,
+        "address": "88 Timber Ridge Trl, Anytown, OH 45099"
+      },
+      {
+        "price": 585000,
+        "beds": 5.0,
+        "sqft": 3420,
+        "ppsf": 171.1,
+        "address": "4 Stonebrook Estates Dr, Anytown, OH 45099"
+      },
+      {
+        "price": 268000,
+        "beds": 3.0,
+        "sqft": 1580,
+        "ppsf": 169.6,
+        "address": "1420 Prairie Rose Ln, Anytown, OH 45099"
+      },
+      {
+        "price": 199900,
+        "beds": 2.0,
+        "sqft": null,
+        "ppsf": null,
+        "address": "309 Mill Race Ave, Anytown, OH 45099"
+      },
+      {
+        "price": 281750,
+        "beds": 3.0,
+        "sqft": 1630,
+        "ppsf": 172.9,
+        "address": "655 Juniper Hollow Ln, Anytown, OH 45099"
+      },
+      {
+        "price": 310500,
+        "beds": 4.0,
+        "sqft": 2050,
+        "ppsf": 151.5,
+        "address": "1808 Beacon Field Rd, Anytown, OH 45099"
+      },
+      {
+        "price": 243000,
+        "beds": 3.0,
+        "sqft": 1470,
+        "ppsf": 165.3,
+        "address": "242 Larkspur Ct, Anytown, OH 45099"
+      }
+    ]
+  },
+  "analysis": {
+    "timeline": [
+      {
+        "date": "6/18/2021",
+        "event": "Sold",
+        "price": 118000,
+        "mls": null,
+        "source": "Public Record",
+        "_date": "2021-06-18"
+      },
+      {
+        "date": "21-JUN-2021",
+        "event": "Sold (county transfer)",
+        "price": 118000,
+        "mls": null,
+        "source": "Butler County Auditor",
+        "_date": "2021-06-21"
+      },
+      {
+        "date": "12/3/2021",
+        "event": "Sold",
+        "price": 228000,
+        "mls": null,
+        "source": "Public Record",
+        "_date": "2021-12-03"
+      },
+      {
+        "date": "07-DEC-2021",
+        "event": "Sold (county transfer)",
+        "price": 228000,
+        "mls": null,
+        "source": "Butler County Auditor",
+        "_date": "2021-12-07"
+      },
+      {
+        "date": "5/20/2025",
+        "event": "Listed for sale",
+        "price": 329900,
+        "mls": "909111222",
+        "source": "Sample MLS #909111222",
+        "_date": "2025-05-20"
+      },
+      {
+        "date": "7/11/2025",
+        "event": "Price change",
+        "price": 314900,
+        "mls": "909111222",
+        "source": "Sample MLS #909111222",
+        "_date": "2025-07-11"
+      },
+      {
+        "date": "9/2/2025",
+        "event": "Pending sale",
+        "price": 314900,
+        "mls": "909111222",
+        "source": "Sample MLS #909111222",
+        "_date": "2025-09-02"
+      },
+      {
+        "date": "10/6/2025",
+        "event": "Back on market",
+        "price": 314900,
+        "mls": "909111222",
+        "source": "Sample MLS #909111222",
+        "_date": "2025-10-06"
+      },
+      {
+        "date": "11/21/2025",
+        "event": "Listing removed",
+        "price": 314900,
+        "mls": "909111222",
+        "source": "Sample MLS #909111222",
+        "_date": "2025-11-21"
+      },
+      {
+        "date": "5/14/2026",
+        "event": "Listed for sale",
+        "price": 299900,
+        "mls": "912345678",
+        "source": "Sample MLS #912345678",
+        "_date": "2026-05-14"
+      },
+      {
+        "date": "6/25/2026",
+        "event": "Price change",
+        "price": 289900,
+        "mls": "912345678",
+        "source": "Sample MLS #912345678",
+        "_date": "2026-06-25"
+      }
+    ],
+    "cumulative_market_days": 239,
+    "relist_count": 1,
+    "price_cuts": {
+      "cuts": [
+        {
+          "date": "7/11/2025",
+          "from": 329900,
+          "to": 314900
+        },
+        {
+          "date": "5/14/2026",
+          "from": 314900,
+          "to": 299900
+        },
+        {
+          "date": "6/25/2026",
+          "from": 299900,
+          "to": 289900
+        }
+      ],
+      "total_cut": 40000,
+      "pct_from_peak": 12.1,
+      "peak": 329900,
+      "current_ask": 289900
+    },
+    "failed_pendings": 1,
+    "flip_flag": "Sold 2021-06-21 for $118,000 then 2021-12-03 for $228,000 (+93% in <12 months)",
+    "assessment_jump_years": [
+      2022,
+      2023
+    ],
+    "unpermitted_reno_flag": true,
+    "contradictions": [
+      "Fuel: listing mentions gas; county fuel=ELECTRIC"
+    ],
+    "steep_lot": false,
+    "tax_projection": {
+      "assessed": 74130,
+      "rate": 52.104213,
+      "gross": 3862,
+      "net": 3528,
+      "math": "$74,130 (assessed 35%) x 52.104213 mills / 1000 = $3,862 gross; x (1 - 0.0865 - 0.0000) = $3,528 projected annual",
+      "current": 2610,
+      "delta": 918
+    },
+    "red_flags": [
+      "Re-listed 1 time(s) after the first listing.",
+      "Price cuts total $40,000 (12.1% below peak ask).",
+      "1 pending sale(s) fell through.",
+      "Possible flip: Sold 2021-06-21 for $118,000 then 2021-12-03 for $228,000 (+93% in <12 months)",
+      "Assessment jump with no permits on file -- possible unpermitted renovation (years: [2022, 2023]).",
+      "Listing/county contradiction -- Fuel: listing mentions gas; county fuel=ELECTRIC",
+      "Cumulative time on market is 239 days."
+    ],
+    "absentee_owner": true,
+    "motivation": {
+      "score": 80.8,
+      "reasons": [
+        "239 cumulative days on market",
+        "ask already cut 12.1% from peak",
+        "1 pending sale(s) fell through",
+        "re-listed 1 time(s)",
+        "absentee owner (tax mailing differs from property)",
+        "flip pattern (short hold / same-day deeds)",
+        "ask is 37% above county value ($211,800)"
+      ]
+    },
+    "comp_value_estimate": {
+      "value": 281000,
+      "ppsf": 173.2,
+      "basis": "similar",
+      "n_similar": 12,
+      "n_all": 13
+    },
+    "value_gap_pct": 3.2,
+    "ladder_anchoring": {
+      "mode": "empirical",
+      "d50": 11.3,
+      "slope": 2.35,
+      "notes": [
+        "zip median sale-to-list 98.4% -> base discount 1.6%",
+        "zip median DOM 21 -> curve slope 2.35",
+        "motivation 80.8/100 -> +8.1 pts discount",
+        "ask is +3.2% vs sold-comps value -> d50 +1.6 pts"
+      ]
+    },
+    "offer_ladder": [
+      {
+        "discount_pct": 0.0,
+        "offer": 290000,
+        "pct_of_list": 100.0,
+        "acceptance_probability_pct": 99,
+        "expected_savings": -99
+      },
+      {
+        "discount_pct": 5.7,
+        "offer": 273500,
+        "pct_of_list": 94.3,
+        "acceptance_probability_pct": 92,
+        "expected_savings": 15015
+      },
+      {
+        "discount_pct": 11.3,
+        "offer": 257000,
+        "pct_of_list": 88.7,
+        "acceptance_probability_pct": 50,
+        "expected_savings": 16450
+      },
+      {
+        "discount_pct": 17.0,
+        "offer": 240500,
+        "pct_of_list": 83.0,
+        "acceptance_probability_pct": 8,
+        "expected_savings": 4014
+      }
+    ]
+  }
+}
