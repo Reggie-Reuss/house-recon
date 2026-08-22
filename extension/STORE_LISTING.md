@@ -71,8 +71,9 @@ host permissions" notice — normal; adds days, needs nothing from you.
 ## EDGE (partner.microsoft.com/dashboard/microsoftedge)
 
 "+ Create new extension" → work through the left-side steps, then Publish.
-Product ID appears on the product overview → listing URL after approval:
-`https://microsoftedge.microsoft.com/addons/detail/<product-id>`
+The listing URL after approval uses the **CRX ID** from the product
+overview's Extension identity block:
+`https://microsoftedge.microsoft.com/addons/detail/<crx-id>`
 
 ### Packages step
 Upload the same zip.
