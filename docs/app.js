@@ -593,6 +593,12 @@ function maybeWidenSoldWindow(result) {
       $("paste-sold").value.trim()) {
     state.soldRetried = true;
     ext.busy = true;
+    ext.ok = 0;
+    ext.total = 1;
+    ext.done = 0;
+    setFetchBusy(true);
+    renderExtProgress(`Only ${n} sold comp${n === 1 ? "" : "s"} in 6 months ` +
+      "— fetching the 1-year window…");
     setPasteState("state-sold", "warn",
       `⏳ Only ${n} sold comp${n === 1 ? "" : "s"} in 6 months — fetching ` +
       "the 1-year window…");
@@ -809,7 +815,26 @@ function installBookmarklet() {
 
 // ---------- companion extension (optional) ----------
 
-const ext = { present: false, busy: false, ok: 0 };
+const ext = { present: false, busy: false, ok: 0, total: 0, done: 0 };
+
+const KIND_LABELS = { listing: "the listing page",
+                      market: "the market page",
+                      sold: "the sold-comps search" };
+
+// Visible, animated progress while pages load out of sight in the
+// extension's minimized window.
+function renderExtProgress(msg) {
+  const s = $("ext-status");
+  s.classList.remove("err");
+  s.innerHTML = `<span class="spinner" aria-hidden="true"></span> ` +
+    `${esc(msg)}${ext.total > 1 ? ` <b>(${ext.done}/${ext.total} done)</b>` : ""}`;
+}
+
+function setFetchBusy(busy) {
+  const b = $("ext-fetch");
+  b.disabled = busy;
+  b.textContent = busy ? "⏳ Fetching…" : "⚡ Fetch pages automatically";
+}
 
 function extUrls() {
   const urls = {};
@@ -838,9 +863,11 @@ async function startAutoFetch() {
   const jobs = Object.entries(urls).map(([kind, url]) => ({ kind, url }));
   ext.busy = true;
   ext.ok = 0;
-  $("ext-fetch").disabled = true;
-  setStatus(status, `Fetching ${jobs.length} page${jobs.length > 1 ? "s" : ""} ` +
-    "in background tabs (your own browser session — expect 10–30 seconds)…");
+  ext.total = jobs.length;
+  ext.done = 0;
+  setFetchBusy(true);
+  renderExtProgress("Loading pages quietly in your browser — " +
+    "10–30 seconds…");
   for (const j of jobs) setPasteState("state-" + j.kind, "warn", "⏳ Fetching…");
   window.postMessage({ type: "hr-fetch", jobs }, window.location.origin);
 }
@@ -856,11 +883,21 @@ function handleExtMessage(d) {
     return;
   }
   if (d.type === "hr-fetch-status") {
-    if (d.kind) setPasteState("state-" + d.kind, "warn", "⏳ " + d.msg);
-    else setStatus($("ext-status"), d.msg);
+    if (d.kind) {
+      setPasteState("state-" + d.kind, "warn", "⏳ " + d.msg);
+      if (ext.busy) {
+        renderExtProgress(`Fetching ${KIND_LABELS[d.kind] || d.kind}…`);
+      }
+    } else {
+      setStatus($("ext-status"), d.msg);
+    }
     return;
   }
   if (d.type === "hr-fetch-result") {
+    ext.done += 1;
+    if (ext.busy && ext.done < ext.total) {
+      renderExtProgress(`Got ${KIND_LABELS[d.kind] || d.kind} ✓ — next page…`);
+    }
     if (d.ok && d.text) {
       ext.ok += 1;
       lastClip = d.text;               // don't double-handle via auto-fill
@@ -880,7 +917,7 @@ function handleExtMessage(d) {
   }
   if (d.type === "hr-fetch-done") {
     ext.busy = false;
-    $("ext-fetch").disabled = false;
+    setFetchBusy(false);
     if (ext.ok > 0 && $("paste-listing").value.trim()) {
       setStatus($("ext-status"),
         `Fetched ${ext.ok} page${ext.ok > 1 ? "s" : ""} ✓ — analyzing…`);
