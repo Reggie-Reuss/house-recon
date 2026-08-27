@@ -1,11 +1,12 @@
 {
   "manifest_version": 3,
   "name": "house-recon companion",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "One click fetches a home's listing, market, and sold-comps pages into the house-recon analyzer. Everything stays in your browser.",
   "minimum_chrome_version": "116",
   "permissions": ["tabs", "scripting"],
   "host_permissions": [
+    "https://reggie-reuss.github.io/*",
     "https://www.zillow.com/*",
     "https://zillow.com/*",
     "https://www.redfin.com/*",

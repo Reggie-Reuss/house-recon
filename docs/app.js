@@ -250,7 +250,7 @@ function selectMatch(m, btn) {
   state.soldWindow = "6mo";
   state.soldRetried = false;
   fetchCountyRecord(m.address, m.county);
-  resolveZpid(m.address);
+  state.zpidReady = resolveZpid(m.address);
   $("addr-input").value = m.address;
   setOpenLink("open-listing",
     `https://www.zillow.com/homes/${slugify(m.address)}_rb/`);
@@ -822,9 +822,12 @@ function extUrls() {
   return urls;
 }
 
-function startAutoFetch() {
+async function startAutoFetch() {
   if (!ext.present || ext.busy) return;
   const status = $("ext-status");
+  // If the canonical-listing-URL lookup is still in flight, wait for it —
+  // otherwise a fast click fetches the filter-sensitive search URL.
+  if (state.zpidReady) { try { await state.zpidReady; } catch {} }
   const urls = extUrls();
   if (!urls.listing) {
     setStatus(status,
@@ -849,6 +852,7 @@ function handleExtMessage(d) {
     const install = $("ext-install"), ready = $("ext-ready");
     if (install) install.classList.add("hidden");
     if (ready) ready.classList.remove("hidden");
+    setStatus($("ext-status"), "");   // clear any post-install refresh prompt
     return;
   }
   if (d.type === "hr-fetch-status") {
@@ -917,6 +921,26 @@ document.addEventListener("visibilitychange", () => {
   if (!document.hidden) tryAutoFill();
 });
 $("ext-fetch").addEventListener("click", startAutoFetch);
+
+// Browsers don't inject content scripts into tabs that were open before an
+// extension was installed. If the user clicks an install button and comes
+// back to this tab without the extension announcing itself, tell them the
+// one thing they need: refresh.
+let installClicked = false;
+for (const id of ["install-chrome", "install-edge"]) {
+  const el = $(id);
+  if (el) el.addEventListener("click", () => { installClicked = true; });
+}
+window.addEventListener("focus", () => {
+  if (!installClicked || ext.present) return;
+  const s = $("ext-status");
+  s.innerHTML = "Installed the extension? " +
+    '<button class="btn small" id="post-install-refresh" type="button">' +
+    "Refresh this page</button> to activate it.";
+  const b = document.getElementById("post-install-refresh");
+  if (b) b.addEventListener("click", () => location.reload());
+});
+
 installBookmarklet();
 // If the extension's content script loaded before us, ask it to re-announce.
 window.postMessage({ type: "hr-ext-ping" }, window.location.origin);

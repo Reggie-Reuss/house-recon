@@ -9,6 +9,14 @@
 
 "use strict";
 
+// Idempotency guard: this file can be injected twice (manifest match plus
+// the on-install injection for already-open tabs) — a second copy would
+// double-run every fetch job.
+if (self.__hrBridgeLoaded) {
+  throw new Error("house-recon bridge already loaded");
+}
+self.__hrBridgeLoaded = true;
+
 const ORIGIN = window.location.origin;
 
 const URL_ALLOWED =

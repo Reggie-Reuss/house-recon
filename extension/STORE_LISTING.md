@@ -47,8 +47,10 @@ Upload the zip. Title + summary display from the manifest.
   only when they click "Fetch pages automatically" on the analyzer page. The
   content script runs only on the analyzer page itself
   (reggie-reuss.github.io/house-recon) to relay the user's request and
-  return the fetched page text. Nothing is transmitted off the user's
-  machine.
+  return the fetched page text; the reggie-reuss.github.io host permission
+  additionally lets the extension inject that same bridge, once at install
+  time, into analyzer tabs that were already open — so the page works
+  without a manual refresh. Nothing is transmitted off the user's machine.
 - **Remote code:** No.
 - **Data usage:** leave all nine collection checkboxes UNCHECKED (nothing is
   collected or transmitted), and CHECK all three certifications at the

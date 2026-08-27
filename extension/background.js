@@ -100,6 +100,23 @@ function pageGrabber(mark) {
 // a page needs a human (captcha).
 let fetchWindowId = null;
 
+// Content scripts don't auto-inject into tabs that were open before the
+// extension was installed — inject the bridge into any open analyzer tabs
+// so the Fetch button appears without a refresh. content.js guards against
+// double-injection.
+chrome.runtime.onInstalled.addListener(async () => {
+  try {
+    const tabs = await chrome.tabs.query(
+      { url: "https://reggie-reuss.github.io/house-recon/*" });
+    for (const t of tabs) {
+      try {
+        await chrome.scripting.executeScript(
+          { target: { tabId: t.id }, files: ["content.js"] });
+      } catch {}
+    }
+  } catch {}
+});
+
 async function fetchTab(url) {
   if (fetchWindowId !== null) {
     try {
