@@ -1,12 +1,11 @@
 /* house-recon companion — background service worker.
  *
  * Grabs a page the same way a person does: open a real tab, let it render,
- * scroll it to the bottom so lazy sections load, take document.body.innerText,
- * close the tab. Tabs open in the foreground on purpose — hidden tabs
- * throttle the IntersectionObservers listing sites use for lazy loading,
- * so a background grab comes back missing the price history. Foreground is
- * also the honest version: the user watches their own browser do the visit,
- * exactly like the CLI's headed-Chrome mode.
+ * poll until its content is actually there, take document.body.innerText,
+ * close the tab. Tabs load in a separate minimized window so the user isn't
+ * yanked around; the readiness polling is wall-clock based, so background
+ * timer throttling only slows the polls, not the result. The window comes
+ * to the front only when a page needs a human (captcha).
  */
 
 "use strict";
@@ -43,7 +42,7 @@ function waitForComplete(tabId) {
 // stop once the text stops growing.
 function pageGrabber(mark) {
   return new Promise(resolve => {
-    const BUDGET_MS = 15000;
+    const BUDGET_MS = 20000; // throttled background tabs poll at >=1s
     const CAPTCHA_RX = new RegExp(
       "press & hold|press and hold|px-captcha|perimeterx|" +
       "access to this page has been denied|are you a human|" +
@@ -94,10 +93,45 @@ function pageGrabber(mark) {
   });
 }
 
+// Pages load in a separate MINIMIZED window so fetching doesn't yank the
+// user around (true headless isn't possible for extensions). The grabber
+// polls on wall-clock time, so background-tab timer throttling (>=1s) only
+// slows the polls, not the outcome. The window pops to the front only when
+// a page needs a human (captcha).
+let fetchWindowId = null;
+
+async function fetchTab(url) {
+  if (fetchWindowId !== null) {
+    try {
+      return await chrome.tabs.create({ windowId: fetchWindowId, url,
+                                        active: false });
+    } catch { fetchWindowId = null; } // user closed the window mid-run
+  }
+  try {
+    const win = await chrome.windows.create({ url, state: "minimized",
+                                              focused: false });
+    fetchWindowId = win.id;
+    return win.tabs[0];
+  } catch { /* some environments reject minimized creation */ }
+  try {
+    const win = await chrome.windows.create({ url, focused: false });
+    fetchWindowId = win.id;
+    return win.tabs[0];
+  } catch { /* fall back to a tab in the current window */ }
+  return chrome.tabs.create({ url, active: false });
+}
+
+async function closeFetchWindow() {
+  if (fetchWindowId === null) return;
+  const id = fetchWindowId;
+  fetchWindowId = null;
+  try { await chrome.windows.remove(id); } catch {}
+}
+
 async function grab(url, openerTabId) {
   let tab = null;
   try {
-    tab = await chrome.tabs.create({ url, active: true, openerTabId });
+    tab = await fetchTab(url);
     await waitForComplete(tab.id);
     await new Promise(r => setTimeout(r, SETTLE_MS));
     const results = await chrome.scripting.executeScript({
@@ -108,7 +142,13 @@ async function grab(url, openerTabId) {
     const r = results && results[0] && results[0].result;
     if (!r) throw new Error("could not read the page");
     if (r.captcha) {
-      // Leave the tab open and focused so the human can pass the check.
+      // Bring the window forward and leave the tab for the human check.
+      try {
+        await chrome.windows.update(tab.windowId,
+                                    { state: "normal", focused: true });
+        await chrome.tabs.update(tab.id, { active: true });
+      } catch {}
+      fetchWindowId = null; // don't close it under the user later
       tab = null;
       return { ok: false, captcha: true };
     }
@@ -133,7 +173,8 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     return true; // keep the channel open for the async response
   }
   if (msg.cmd === "focus-me") {
-    chrome.tabs.update(sender.tab.id, { active: true })
+    closeFetchWindow()
+      .then(() => chrome.tabs.update(sender.tab.id, { active: true }))
       .then(() => chrome.windows.update(sender.tab.windowId, { focused: true }))
       .then(() => sendResponse({ ok: true }), () => sendResponse({ ok: false }));
     return true;

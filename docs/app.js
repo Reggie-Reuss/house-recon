@@ -32,7 +32,8 @@ const countyRoutesReady = loadCountyRoutes();
 
 const $ = id => document.getElementById(id);
 const state = { address: null, zip: null, countySections: null,
-                countyMeta: null };
+                countyMeta: null, zpid: null, soldWindow: "6mo",
+                soldRetried: false };
 
 function esc(s) {
   return String(s).replace(/[&<>"']/g, c => ({
@@ -92,8 +93,9 @@ async function censusLookup(q) {
 // ---------- step 1: address ----------
 
 function marketUrl(zip) { return `https://www.redfin.com/zipcode/${zip}/housing-market`; }
-function soldUrl(zip) {
-  return `https://www.redfin.com/zipcode/${zip}/filter/include=sold-6mo,property-type=house`;
+function soldUrl(zip, window) {
+  return `https://www.redfin.com/zipcode/${zip}/filter/include=sold-` +
+    `${window || "6mo"},property-type=house`;
 }
 
 function setOpenLink(id, href) {
@@ -209,12 +211,46 @@ async function fetchCountyRecord(address, county) {
   }
 }
 
+// Resolve the house's zpid via Zillow's public address suggester (CORS-open)
+// so the listing URL is the canonical /homedetails/{zpid}_zpid/ page. The
+// search-URL fallback breaks for off-market homes and for users whose saved
+// Zillow filters hide the listing from search results.
+async function resolveZpid(address) {
+  state.zpid = null;
+  try {
+    const res = await fetch(
+      "https://www.zillowstatic.com/autocomplete/v3/suggestions?q=" +
+      encodeURIComponent(address) + "&resultTypes=allAddress&resultCount=1");
+    const data = await res.json();
+    const md = data && data.results && data.results[0] &&
+      data.results[0].metaData;
+    if (md && md.zpid) {
+      state.zpid = md.zpid;
+      setOpenLink("open-listing",
+        `https://www.zillow.com/homedetails/${md.zpid}_zpid/`);
+      $("ex-listing").textContent =
+        `zillow.com/homedetails/${md.zpid}_zpid/`;
+    }
+  } catch { /* fall back to the search URL already set */ }
+}
+
+function listingUrl() {
+  return state.zpid
+    ? `https://www.zillow.com/homedetails/${state.zpid}_zpid/`
+    : (state.address
+        ? `https://www.zillow.com/homes/${slugify(state.address)}_rb/`
+        : null);
+}
+
 function selectMatch(m, btn) {
   document.querySelectorAll(".match.selected")
     .forEach(el => el.classList.remove("selected"));
   if (btn) btn.classList.add("selected");
   state.address = m.address;
+  state.soldWindow = "6mo";
+  state.soldRetried = false;
   fetchCountyRecord(m.address, m.county);
+  resolveZpid(m.address);
   $("addr-input").value = m.address;
   setOpenLink("open-listing",
     `https://www.zillow.com/homes/${slugify(m.address)}_rb/`);
@@ -540,6 +576,34 @@ function analyze() {
   window.lastResult = result;
   $("panel-report").classList.remove("hidden");
   $("panel-report").scrollIntoView({ behavior: "smooth" });
+  maybeWidenSoldWindow(result);
+}
+
+// Thin sold comps (rural zips, slow markets): offer — or, with the
+// extension, just fetch — the 1-year sold window instead of 6 months.
+function maybeWidenSoldWindow(result) {
+  const n = result.comps ? result.comps.n : 0;
+  if (n >= 5 || state.soldWindow !== "6mo" || !state.zip) return;
+  state.soldWindow = "1yr";
+  const wideUrl = soldUrl(state.zip, "1yr");
+  setOpenLink("open-sold", wideUrl);
+  $("ex-sold").textContent =
+    `redfin.com/zipcode/${state.zip}/filter/include=sold-1yr,property-type=house`;
+  if (ext.present && !ext.busy && !state.soldRetried &&
+      $("paste-sold").value.trim()) {
+    state.soldRetried = true;
+    ext.busy = true;
+    setPasteState("state-sold", "warn",
+      `⏳ Only ${n} sold comp${n === 1 ? "" : "s"} in 6 months — fetching ` +
+      "the 1-year window…");
+    window.postMessage({ type: "hr-fetch",
+      jobs: [{ kind: "sold", url: wideUrl }] }, window.location.origin);
+  } else if (n > 0) {
+    setPasteState("state-sold", "warn",
+      `⚠ Only ${n} sold comp${n === 1 ? "" : "s"} in 6 months — the value ` +
+      "estimate is weak. Open sold search ↗ now points at the 1-year window; " +
+      "copy that page in and re-analyze.");
+  }
 }
 
 function tableHtml(headers, rows) {
@@ -710,6 +774,9 @@ function loadDemo() {
   state.address = DEMO_ADDRESS;
   state.countySections = null;
   state.countyMeta = null;
+  state.zpid = null;
+  state.soldWindow = "6mo";
+  state.soldRetried = true;   // demo data is synthetic — never re-fetch
   setStatus($("county-status"), "");
   applyZip(DEMO_ZIP);
   setOpenLink("open-listing",
@@ -746,12 +813,11 @@ const ext = { present: false, busy: false, ok: 0 };
 
 function extUrls() {
   const urls = {};
-  if (state.address) {
-    urls.listing = `https://www.zillow.com/homes/${slugify(state.address)}_rb/`;
-  }
+  const lu = listingUrl();
+  if (lu) urls.listing = lu;
   if (state.zip) {
     urls.market = marketUrl(state.zip);
-    urls.sold = soldUrl(state.zip);
+    urls.sold = soldUrl(state.zip, state.soldWindow);
   }
   return urls;
 }

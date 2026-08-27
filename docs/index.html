@@ -102,9 +102,9 @@
 
       <div id="ext-ready" class="installcard hidden">
         <button class="btn primary big" id="ext-fetch" type="button">⚡ Fetch pages automatically</button>
-        <p class="storenote">Opens the listing, market, and sold pages in
-          tabs, reads them, closes them — about 10–30 seconds. The report
-          renders itself.</p>
+        <p class="storenote">Loads the listing, market, and sold pages
+          quietly in a minimized window, reads them, closes them — about
+          10–30 seconds. The report renders itself.</p>
       </div>
       <div id="ext-status" class="status center" role="status"></div>
 
@@ -201,9 +201,11 @@
     <p>
       <a href="https://github.com/Reggie-Reuss/house-recon">Source on GitHub</a> ·
       <a href="https://github.com/Reggie-Reuss/house-recon/blob/main/METHODS.md">Methodology</a> ·
-      MIT license · Address lookup by the
+      MIT license · This page's only own network calls: the
       <a href="https://geocoding.geo.census.gov/">U.S. Census Bureau geocoder</a>
-      (the one thing this page calls out to — your pasted text is never sent).
+      and Zillow's address suggester (both just to pin down the address), and
+      the county-records Worker for supported counties. Your pasted or fetched
+      page text is never sent anywhere.
     </p>
   </div>
 </footer>
