@@ -33,6 +33,8 @@ export const COUNTIES = {
   "vermillion-in": { geoid: "18165", name: "Vermillion County, IN", state: "IN", platform: "wth", base: "https://vermillionin.wthgis.com", map: "Vermillion_IN" },
   "warren-in": { geoid: "18171", name: "Warren County, IN", state: "IN", platform: "wth", base: "https://warrenin.wthgis.com", map: "Warren_IN" },
   "washington-in": { geoid: "18175", name: "Washington County, IN", state: "IN", platform: "wth", base: "https://washingtonin.wthgis.com", map: "Washington_IN" },
+  "ashtabula-oh": { geoid: "39007", name: "Ashtabula County, OH", state: "OH", platform: "iasworld", base: "https://auditor.ashtabulacounty.gov", prefix: "/PT" },
+  "auglaize-oh": { geoid: "39011", name: "Auglaize County, OH", state: "OH", platform: "iasworld", base: "https://auditoraccess.auglaizecounty.org", prefix: "" },
   "butler-oh": { geoid: "39017", name: "Butler County, OH", state: "OH", platform: "iasworld", base: "https://propertysearch.bcohio.gov", prefix: "" },
   "clermont-oh": { geoid: "39025", name: "Clermont County, OH", state: "OH", platform: "iasworld", base: "https://www.clermontauditorrealestate.org", prefix: "/_web" },
   "franklin-oh": { geoid: "39049", name: "Franklin County, OH", state: "OH", platform: "iasworld", base: "https://property.franklincountyauditor.com", prefix: "/_web" },

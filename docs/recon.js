@@ -307,7 +307,9 @@ function parseIasWorldCounty(sections, name) {
 
   out.permits_count =
     ((sections.permits || "").match(/\d{1,2}-[A-Z]{3}-\d{4}/g) || []).length;
-  return out.parcel_id ? out : null;
+  // Some portals never print a parcel-id label on the profile view; accept
+  // the record when the parcel attribute fields themselves parsed.
+  return (out.parcel_id || (out.land_use && out.district)) ? out : null;
 }
 
 // Ohio: net annual tax ≈ price × 35% × effective millage − rollback credits.

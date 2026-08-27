@@ -62,6 +62,7 @@ function stripHtml(html) {
     .replace(/<\/(td|th)>/gi, "\t")
     .replace(/<[^>]+>/g, "")
     .replace(/&nbsp;/g, " ")
+    .replace(/ /g, " ")
     .replace(/&amp;/g, "&")
     .replace(/&#39;/g, "'")
     .replace(/[ \t]*\n[ \t]*/g, "\n")
@@ -77,44 +78,70 @@ function hiddenFields(html) {
   return out;
 }
 
-function sessionCookie(res) {
-  const cookies = typeof res.headers.getSetCookie === "function"
+// Workers' fetch drops Set-Cookie headers from intermediate redirect hops,
+// and these ASP.NET portals often mint the session cookie ON a redirect
+// (commonsearch -> Disclaimer). So: follow redirects manually, collecting
+// cookies from every hop into a jar sent with every request.
+function jarCollect(res, jar) {
+  const cs = typeof res.headers.getSetCookie === "function"
     ? res.headers.getSetCookie()
     : [res.headers.get("set-cookie") || ""];
-  return cookies
-    .map(c => (c || "").split(";")[0])
-    .filter(Boolean)
-    .join("; ");
+  for (const c of cs) {
+    const kv = (c || "").split(";")[0].trim();
+    if (kv && kv.includes("=")) jar.map.set(kv.split("=")[0], kv);
+  }
+  jar.cookie = [...jar.map.values()].join("; ");
+}
+
+async function jarFetch(url, opts, jar, follow = true) {
+  let u = url;
+  let cur = opts;
+  for (let i = 0; i < 6; i++) {
+    const res = await fetch(u, {
+      ...cur,
+      redirect: "manual",
+      headers: { ...(cur.headers || {}),
+                 ...(jar.cookie ? { Cookie: jar.cookie } : {}) },
+    });
+    jarCollect(res, jar);
+    if (follow && res.status >= 300 && res.status < 400) {
+      const loc = res.headers.get("location");
+      if (!loc) return res;
+      u = new URL(loc, u).toString();
+      cur = { headers: cur.headers }; // redirected requests become GETs
+      continue;
+    }
+    return res;
+  }
+  throw new Error("too many redirects");
 }
 
 async function iasWorldLookup(cfg, number, street) {
   const root = cfg.base + cfg.prefix;
   const headers = { "User-Agent": UA };
-  let r1 = await fetch(`${root}/search/commonsearch.aspx?mode=address`,
-                       { headers });
-  let cookie = sessionCookie(r1);
-  const withCookie = () =>
-    ({ ...headers, ...(cookie ? { Cookie: cookie } : {}) });
+  const jar = { map: new Map(), cookie: "" };
+  let r1 = await jarFetch(`${root}/search/commonsearch.aspx?mode=address`,
+                          { headers }, jar);
   let html1 = await r1.text();
 
   // Some counties gate on a disclaimer postback before showing the form.
+  // The agree control is an <input> on some portals and a <button> on
+  // others (e.g. /PT installs) — the server only honors the POST when the
+  // btAgree field is present, any value.
   if (html1.includes("btAgree") && !html1.includes("inpNumber")) {
     const f = hiddenFields(html1);
-    const am = html1.match(/<input[^>]+name="(btAgree[^"]*)"[^>]*value="([^"]*)"/);
-    if (am) f[am[1]] = am[2];
-    const ra = await fetch(r1.url, {
+    const am = html1.match(
+      /<(?:input|button)[^>]+name="(btAgree[^"]*)"(?:[^>]*value="([^"]*)")?/);
+    if (am) f[am[1]] = am[2] || "";
+    await jarFetch(r1.url, {
       method: "POST",
-      headers: { ...withCookie(),
+      headers: { ...headers,
                  "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams(f).toString(),
-    });
-    cookie = sessionCookie(ra) || cookie;
-    html1 = await ra.text();
-    if (!html1.includes("inpNumber")) {
-      r1 = await fetch(`${root}/search/commonsearch.aspx?mode=address`,
-                       { headers: withCookie() });
-      html1 = await r1.text();
-    }
+    }, jar);
+    r1 = await jarFetch(`${root}/search/commonsearch.aspx?mode=address`,
+                        { headers }, jar);
+    html1 = await r1.text();
   }
   if (!html1.includes("inpNumber")) {
     return { ok: false, error: "portal changed",
@@ -128,31 +155,40 @@ async function iasWorldLookup(cfg, number, street) {
     selSortBy: "PARID", selSortDir: "asc", selPageSize: "15",
     btSearch: "Search",
   });
-  const r2 = await fetch(`${root}/search/commonsearch.aspx?mode=address`, {
+  const r2 = await jarFetch(`${root}/search/commonsearch.aspx?mode=address`, {
     method: "POST",
-    headers: { ...withCookie(),
+    headers: { ...headers,
                "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams(form).toString(),
-    redirect: "manual",
-  });
+  }, jar, false);
 
   // Unique match: 302 straight to the datalet. Multiple matches: a results
   // page whose rows carry selectSearchRow('../Datalets/Datalet.aspx?...')
-  // links — take the first (closest) row and report the count.
+  // links — take the first (closest) row and report the count. Some portals
+  // 302 to the results page instead; VISITING it is what establishes the
+  // server-side row state the datalet needs, so follow and scan it.
   let dataletQs = null;
   let matches = 1;
-  if (r2.status >= 300 && r2.status < 400) {
-    const loc = r2.headers.get("location") || "";
-    const qm = loc.match(/datalet\.aspx\?(.+)$/i);
-    if (qm) dataletQs = qm[1];
-  } else {
-    const body = await r2.text();
+  const scanRows = body => {
     const hrefs = [...body.matchAll(/Datalet\.aspx\?(sIndex=\d+&(?:amp;)?idx=\d+)/gi)]
       .map(m => m[1].replace(/&amp;/g, "&"));
     if (hrefs.length) {
       dataletQs = hrefs[0];
       matches = new Set(hrefs).size;
     }
+  };
+  if (r2.status >= 300 && r2.status < 400) {
+    const loc = r2.headers.get("location") || "";
+    const qm = loc.match(/datalet\.aspx\?(.+)$/i);
+    if (qm) {
+      dataletQs = qm[1];
+    } else if (loc) {
+      const rr = await jarFetch(
+        new URL(loc, `${root}/search/`).toString(), { headers }, jar);
+      scanRows(await rr.text());
+    }
+  } else {
+    scanRows(await r2.text());
   }
   if (!dataletQs) {
     return { ok: false, error: "no match",
@@ -165,12 +201,12 @@ async function iasWorldLookup(cfg, number, street) {
   // (Franklin) serve empty chrome without both, and the first hit also
   // sets the session's "current parcel" state the mode pages need.
   const dataletHeaders = {
-    ...withCookie(),
+    ...headers,
     Referer: `${root}/search/commonsearch.aspx?mode=address`,
   };
   const sections = {};
-  const raw = await fetch(`${root}/Datalets/Datalet.aspx?${dataletQs}`,
-                          { headers: dataletHeaders });
+  const raw = await jarFetch(`${root}/Datalets/Datalet.aspx?${dataletQs}`,
+                             { headers: dataletHeaders }, jar);
   const rawHtml = await raw.text();
   sections.profile = stripHtml(rawHtml);
 
@@ -181,12 +217,17 @@ async function iasWorldLookup(cfg, number, street) {
     .slice(0, MAX_MODE_FETCHES);
   for (const mode of wanted) {
     const u = `${root}/Datalets/Datalet.aspx?mode=${mode}&${dataletQs}`;
-    const rr = await fetch(u, { headers: dataletHeaders });
+    const rr = await jarFetch(u, { headers: dataletHeaders }, jar);
     sections[mode] = stripHtml(await rr.text());
   }
 
+  // Success signal: a parcel-id label, or (some portals never print one on
+  // the profile view) the parcel attribute fields themselves.
   const allText = Object.values(sections).join("\n");
-  if (!/(?:PARID|Parcel Number|Parcel ID):/i.test(allText)) {
+  const hasRecord = /(?:PARID|Parcel Number|Parcel ID):/i.test(allText) ||
+    (/Land Use (?:Code|Description)/i.test(allText) &&
+     /(?:District Name|Taxing District)/i.test(allText));
+  if (!hasRecord) {
     return { ok: false, error: "no parcel data",
              detail: "the county portal returned no parcel record" };
   }

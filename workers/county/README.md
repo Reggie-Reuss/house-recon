@@ -28,10 +28,10 @@ fetches the record automatically and the report gains:
 
 ## Coverage
 
-**31 counties live** — `GET /counties` is the authoritative list (the
+**33 counties live** — `GET /counties` is the authoritative list (the
 analyzer page loads it at startup, so nothing is hard-coded client-side):
 
-- **Ohio** — 5 counties on Tyler **iasWorld** portals (adapter:
+- **Ohio** — 7 counties on Tyler **iasWorld** portals (adapter:
   `iasWorldLookup`). Any other iasWorld county is a one-line registry entry.
 - **Indiana** — 26 counties on **WTH GIS** (adapter: `wthLookup`).
 
