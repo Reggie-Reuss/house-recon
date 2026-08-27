@@ -28,16 +28,22 @@ philosophy, minus the CLI.
 
 ## Install
 
-Until the Chrome Web Store listing is up, load it unpacked (~2 minutes):
+One click from the stores:
+
+- **[Chrome Web Store](https://chromewebstore.google.com/detail/house-recon-companion/hfeipempelbcdegkngoibcbfihpnadfm)** (Chrome, Brave, and other Chromium browsers)
+- **[Edge Add-ons](https://microsoftedge.microsoft.com/addons/detail/pcjimembldibfmigkhcpbpgfjlkoncdj)**
+
+Then open (or reload) the [analyzer page](https://reggie-reuss.github.io/house-recon/) —
+step 2 shows **⚡ Fetch pages automatically**.
+
+<details><summary>Developer install (load unpacked)</summary>
 
 1. Download this repository ([ZIP](https://github.com/Reggie-Reuss/house-recon/archive/refs/heads/main.zip))
    and unzip it — or `git clone` it.
 2. Open `chrome://extensions` (Edge: `edge://extensions`).
 3. Turn on **Developer mode** (top-right toggle).
 4. Click **Load unpacked** and select the `extension/` folder.
-5. Open (or reload) the [analyzer page](https://reggie-reuss.github.io/house-recon/) —
-   step 2 now shows **⚡ Extension detected** with a
-   **Fetch pages automatically** button.
+</details>
 
 ## Use
 
