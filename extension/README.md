@@ -11,10 +11,12 @@ browser**, hands their text to the analyzer page, and the report renders.
 Listing sites aggressively block scraping servers, but they serve normal
 visitors happily. The extension keeps the analyzer's core property — *you*
 visit the pages, with your own browser, cookies, and IP — while automating the
-"open, scroll, copy" busywork. Tabs open **in the foreground on purpose**: you
-watch your browser do the visit (hidden tabs also break the sites' lazy-loaded
-sections, like Zillow's price history). It is the CLI's headed-Chrome
-philosophy, minus the CLI.
+"open, scroll, copy" busywork. Pages load **quietly in a minimized window**
+(the analyzer page shows a live per-page progress counter while they do), and
+the window only comes to the front when a site wants a human check. It is the
+CLI's headed-Chrome philosophy, minus the CLI.
+
+![Step 2 of the analyzer mid-fetch: busy Fetch button with a spinner and per-page progress in the status area](../docs/assets/ext-fetch.png)
 
 ## Privacy
 
@@ -48,30 +50,34 @@ step 2 shows **⚡ Fetch pages automatically**.
 ## Use
 
 1. On the analyzer page, do step 1 (Find address).
-2. Click **Fetch pages automatically**. Tabs will open, scroll themselves,
-   and close — about 10–30 seconds for all three pages.
-3. The report renders on its own when the listing parses.
+2. Click **Fetch pages automatically**. The pages load, scroll, and close in
+   a minimized window — about 10–30 seconds for all three, with a live page
+   counter in the analyzer's status area.
+3. The report renders on its own when the listing parses. If the zip turns up
+   fewer than 5 sold comps in 6 months, the extension automatically re-fetches
+   the 1-year sold window to firm up the value estimate.
 
-If a site shows a human check ("Press & Hold"), the extension leaves that tab
-open for you — complete the check (you're a real visitor, it passes), then
-click **Fetch pages automatically** again.
+If a site shows a human check ("Press & Hold"), the window comes to the front
+and waits for you — complete the check (you're a real visitor, it passes),
+then click **Fetch pages automatically** again.
 
 ## Known limitations
 
-- The listing fetch uses Zillow's address search URL. If Zillow lands on a
-  search-results page instead of the house's own page, the analyzer will say
-  no price history was found — open the listing yourself and use the Grab page
-  bookmarklet or Ctrl+A / Ctrl+C for that one box.
+- The listing URL is resolved through Zillow's address suggester, so
+  off-market homes and accounts with saved Zillow search filters work. If the
+  suggester doesn't know the address at all, the fetch falls back to Zillow's
+  address-search URL, which can land on a results page — open the listing
+  yourself and use the Grab page bookmarklet or Ctrl+A / Ctrl+C for that one
+  box.
 - Firefox needs an MV3 port (event page instead of service worker) — not done
   yet.
 
 ## Publishing to stores (maintainer notes)
 
-- **Chrome Web Store**: one-time $5 developer fee → upload `house-recon-companion.zip`
-  (built by `build.ps1` in this folder, or just zip the folder contents,
-  manifest at the zip root). Category: Tools. Justify `tabs` + `scripting` +
-  host permissions as "fetches real-estate pages the user explicitly requests,
-  in their own session".
-- **Edge Add-ons**: free developer registration, same zip.
-- Once live, replace the "Install — takes 2 minutes" link in
-  `docs/index.html` with the store URL.
+The extension is live on both stores (links above). To ship an update: bump
+the version in `manifest.json`, build the store zip with `build.ps1` (it
+strips the dev-only localhost permissions), and upload it in both developer
+consoles. Field-by-field submission walkthroughs — including permission
+justifications and screenshot requirements — live in
+[STORE_LISTING.md](STORE_LISTING.md); the stores' privacy policy is
+[PRIVACY.md](PRIVACY.md).

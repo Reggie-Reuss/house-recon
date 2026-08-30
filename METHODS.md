@@ -320,7 +320,7 @@ Documented for future implementation. Same structure; each marked automatable ye
 
 **Automatable?** **Yes** — Redfin sold data is scrapeable; county conveyances feed Method 3's parser.
 
-**Status: partially implemented.** `house_recon.py` now scrapes the zip's last-6-months sold listings (Redfin sold search via the headed browser, Zillow fallback), computes a median-$/sqft value estimate from similar-size/similar-bed comps, and feeds the ask-vs-value gap into the offer ladder (Method 10a). Still untapped from this method: distance-weighted comp selection, per-comp condition adjustments, and county-conveyance cross-checks.
+**Status: partially implemented.** `house_recon.py` now scrapes the zip's last-6-months sold listings (Redfin sold search via the headed browser, Zillow fallback), computes a median-$/sqft value estimate from similar-size/similar-bed comps, and feeds the ask-vs-value gap into the offer ladder (Method 10a). The browser analyzer runs the same computation client-side and automatically widens to the 1-year sold window when a zip has fewer than 5 similar comps in 6 months. Still untapped from this method: distance-weighted comp selection, per-comp condition adjustments, and county-conveyance cross-checks.
 
 **Gotchas:** Exclude non-arm's-length transfers (nominal amounts, family names matching). Condition adjustment is the weak link — photo review of comps helps. Zip-median $/sqft is a coarse anchor: small houses skew high on $/sqft, and one street can differ from the next.
 
